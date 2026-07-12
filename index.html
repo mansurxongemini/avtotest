@@ -61,12 +61,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10000;
             flex-direction: column;
+            border-bottom: 1px solid #e4ebe4;
         }
 
         #login-screen.hidden {
@@ -74,10 +75,11 @@
         }
 
         .login-container {
-            background: white;
+            background: #ffffff;
+            border: 1px solid #e4ebe4;
             border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             max-width: 400px;
             width: 90%;
             text-align: center;
@@ -85,69 +87,74 @@
 
         .login-container h1 {
             margin: 0 0 10px 0;
-            color: #333;
-            font-size: 28px;
+            color: #001e00;
+            font-size: 30px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
         }
 
         .login-container p {
-            color: #666;
+            color: #64748b;
             margin: 0 0 30px 0;
-            font-size: 16px;
+            font-size: 15px;
+            line-height: 1.5;
         }
 
         .login-form {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
             text-align: left;
         }
 
         .login-field {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .login-field label {
-            font-weight: 600;
-            color: #444;
-            font-size: 14px;
+            font-weight: 700;
+            color: #001e00;
+            font-size: 13px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
         }
 
         .login-field input {
-            padding: 12px;
-            border: 1px solid rgba(102, 126, 234, 0.4);
+            padding: 12px 16px;
+            border: 1px solid #e4ebe4;
             border-radius: 8px;
             font-size: 15px;
-            background: #f7f8ff;
-            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-            color: #222;
+            background: #ffffff;
+            transition: all 0.2s ease;
+            color: #001e00;
         }
 
         .login-field input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-            background: #fff;
+            border-color: #14a800;
+            box-shadow: 0 0 0 3px rgba(20, 168, 0, 0.1);
         }
 
         .login-button {
-            background: #667eea;
+            background: #14a800;
             color: white;
             border: none;
             padding: 14px 32px;
             border-radius: 8px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
             width: 100%;
+            box-shadow: 0 2px 8px rgba(20, 168, 0, 0.15);
         }
 
         .login-button:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            background: #118f00;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(20, 168, 0, 0.25);
         }
 
         .login-button:active {
@@ -155,14 +162,18 @@
         }
 
         .login-button:disabled {
-            background: #ccc;
+            background: #f9fbf9;
+            color: #64748b;
+            border: 1px solid #e4ebe4;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .login-error {
-            background: rgba(244, 67, 54, 0.12);
-            color: #c62828;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            color: #ef4444;
             padding: 12px 14px;
             border-radius: 8px;
             font-size: 14px;
@@ -173,9 +184,9 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(0, 30, 0, 0.2);
             border-radius: 50%;
-            border-top-color: #fff;
+            border-top-color: #14a800;
             animation: spin 1s ease-in-out infinite;
             margin-right: 10px;
         }
@@ -188,10 +199,11 @@
             position: fixed;
             top: 10px;
             right: 10px;
-            background: rgba(255, 255, 255, 0.9);
+            background: #ffffff;
+            border: 1px solid #e4ebe4;
             padding: 10px 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -200,22 +212,25 @@
 
         .user-name {
             font-size: 14px;
-            color: #333;
+            color: #001e00;
+            font-weight: 600;
         }
 
         .logout-button {
-            background: #f44336;
-            color: white;
-            border: none;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
             padding: 6px 12px;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 12px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
         }
 
         .logout-button:hover {
-            background: #d32f2f;
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+            color: #ef4444;
         }
     </style>
 </head>
@@ -440,16 +455,37 @@
         <div class="question-controls" role="group" aria-label="Question navigation controls">
             <button id="prev" disabled aria-label="Previous question">Oldingi</button>
             <button id="next" disabled aria-label="Next question">Keyingi</button>
+            <button id="share-help-btn" class="upwork-btn-secondary" aria-label="Yordam olish">Yordam olish</button>
         </div>
         
         <div class="result" id="result" role="status" aria-live="polite" aria-atomic="true"></div>
         <div class="percentage-display hidden" id="percentageDisplay" role="status" aria-live="polite">Tog'ri Javoblar: 0.00%</div>
     </section>
 
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p class="footer-copyright">&copy; 2026 Avto Test. Barcha huquqlar himoyalangan.</p>
+            <p class="footer-author">Dasturchi va dizayner: <span class="brand-name">Mansurxon Rustamov (RMC)</span></p>
+        </div>
+    </footer>
+
     <button class="back-button" id="back-button" aria-label="Go back">
         <img src="./assets/arrowLeft.svg" alt="" class="back-arrow" aria-hidden="true">
         <span class="back-text">Orqaga</span>
     </button>
+    <!-- Help Share Modal -->
+    <div id="help-modal" class="custom-modal" style="display: none;">
+        <div class="modal-backdrop"></div>
+        <div class="modal-card">
+            <button class="modal-close-btn">&times;</button>
+            <h3>Sariq/Yordam havolasi</h3>
+            <p class="modal-instruction-text">Ushbu havolani olib, ushbu savolga javob bera oladigan odamga yuboring😉😊</p>
+            <div class="share-link-box">
+                <input type="text" id="share-link-input" readonly />
+                <button id="modal-copy-btn">Nusxalash</button>
+            </div>
+        </div>
+    </div>
     
     <!-- Scripts -->
     <script type="module" src="./scripts/main.js"></script>

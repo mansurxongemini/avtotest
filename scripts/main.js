@@ -266,6 +266,10 @@ function displayQuestion() {
     
     answerElement.addEventListener("click", () => {
       if (!selectedAnswer) {
+        // In Lesson Mode, clicking incorrect (white) options is ignored
+        if (isDarslarModeActive && isDarslarLessonMode && !isOraliqTest && !isImtihonTest && !answer.is_true) {
+          return;
+        }
         selectedAnswer = answer;
         document.querySelectorAll(".answer").forEach((a) => {
           a.classList.remove("selected", "lesson-mode-correct");
@@ -533,6 +537,55 @@ function showImtihonOptions() {
   });
 }
 
+// Sleek Toast Notification Helper
+function showToast(message) {
+  let toast = document.querySelector('.upwork-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'upwork-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+// Load Shared Question View
+function loadSharedQuestion(questionId) {
+  const qId = parseInt(questionId);
+  const question = Questions.find(q => q.id === qId);
+  if (question) {
+    filteredQuestions = [question];
+    currentQuestionIndex = 0;
+    
+    // Hide login screen and all main panels
+    document.getElementById('login-screen')?.classList.add('hidden');
+    if (lessonsSection) lessonsSection.style.display = 'none';
+    if (chaptersSection) chaptersSection.style.display = 'none';
+    if (topicsSection) topicsSection.style.display = 'none';
+    if (backButton) backButton.style.display = 'none';
+    
+    // Show question interface
+    if (questionInterface) {
+      questionInterface.style.display = 'block';
+    }
+    
+    // Hide navigation/statistics controls for shared single view
+    if (testNavigation) testNavigation.style.display = 'none';
+    if (prevButton) prevButton.style.display = 'none';
+    if (nextButton) nextButton.style.display = 'none';
+    if (percentageDisplay) percentageDisplay.style.display = 'none';
+    
+    // Hide the get help button inside shared single view
+    const shareHelpBtn = document.getElementById('share-help-btn');
+    if (shareHelpBtn) shareHelpBtn.style.display = 'none';
+    
+    displayQuestion();
+  }
+}
+
 // App DOM Initialization
 document.addEventListener('DOMContentLoaded', () => {
   const adminLinks = document.querySelectorAll('[data-admin-visible]');
@@ -578,4 +631,64 @@ document.addEventListener('DOMContentLoaded', () => {
   
   document.getElementById('desktop-logout-button')?.addEventListener('click', () => window.location.reload());
   document.getElementById('mobile-logout-button')?.addEventListener('click', () => window.location.reload());
+  
+  // Yordam olish (Get Help) Click Handler
+  const shareHelpBtn = document.getElementById('share-help-btn');
+  const helpModal = document.getElementById('help-modal');
+  const shareLinkInput = document.getElementById('share-link-input');
+  const modalCopyBtn = document.getElementById('modal-copy-btn');
+  
+  if (shareHelpBtn && helpModal && shareLinkInput) {
+    shareHelpBtn.addEventListener('click', () => {
+      const currentQuestion = filteredQuestions[currentQuestionIndex];
+      if (currentQuestion) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('questionId', currentQuestion.id);
+        shareLinkInput.value = currentUrl.href;
+        
+        // Open Modal
+        helpModal.style.display = 'flex';
+        setTimeout(() => helpModal.classList.add('show'), 10);
+      }
+    });
+  }
+  
+  // Close Modal Helpers
+  if (helpModal) {
+    const closeBtn = helpModal.querySelector('.modal-close-btn');
+    const backdrop = helpModal.querySelector('.modal-backdrop');
+    
+    const closeModal = () => {
+      helpModal.classList.remove('show');
+      setTimeout(() => {
+        helpModal.style.display = 'none';
+      }, 300);
+    };
+    
+    closeBtn?.addEventListener('click', closeModal);
+    backdrop?.addEventListener('click', closeModal);
+  }
+  
+  // Modal Copy Action
+  if (modalCopyBtn && shareLinkInput) {
+    modalCopyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+        modalCopyBtn.innerText = "Nusxalandi! ✓";
+        modalCopyBtn.style.background = "#118f00";
+        showToast("Havola nusxalandi!");
+        
+        setTimeout(() => {
+          modalCopyBtn.innerText = "Nusxalash";
+          modalCopyBtn.style.background = "#14a800";
+        }, 2000);
+      });
+    });
+  }
+  
+  // URL Checker for Shared Question
+  const urlParams = new URLSearchParams(window.location.search);
+  const sharedQuestionId = urlParams.get('questionId');
+  if (sharedQuestionId) {
+    loadSharedQuestion(sharedQuestionId);
+  }
 });
