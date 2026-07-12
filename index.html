@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Driving License Testing Application - Practice and prepare for your driving license exam">
+    <meta name="keywords" content="driving license, test, exam, practice, avto test, driving test">
+    <meta name="author" content="Avto Test">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Avto Test - Driving License Testing Application">
+    <meta property="og:description" content="Practice and prepare for your driving license exam with interactive tests">
+    <meta property="og:image" content="./logo.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Avto Test - Driving License Testing Application">
+    <meta name="twitter:description" content="Practice and prepare for your driving license exam with interactive tests">
+    
+    <title>Avto Test - Driving License Testing Application</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./assets/timer.png">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/components.css">
+    <link rel="stylesheet" href="./styles/responsive.css">
+    
+    <!-- Font Preloading for Better Performance -->
+    <link rel="preload" href="./assets/Inter/static/Inter_18pt-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="./assets/Inter/static/Inter_18pt-Medium.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="./assets/Inter/static/Inter_18pt-Bold.ttf" as="font" type="font/ttf" crossorigin>
+    
+    <!-- Custom Font -->
+    <style>
+        
+        /* Security: Prevent text selection */
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Allow selection only in input fields if needed */
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+    </style>
+    
+    <!-- Login Screen Styles -->
+    <style>
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            flex-direction: column;
+        }
+
+        #login-screen.hidden {
+            display: none;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .login-container h1 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 28px;
+        }
+
+        .login-container p {
+            color: #666;
+            margin: 0 0 30px 0;
+            font-size: 16px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: left;
+        }
+
+        .login-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .login-field label {
+            font-weight: 600;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .login-field input {
+            padding: 12px;
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            border-radius: 8px;
+            font-size: 15px;
+            background: #f7f8ff;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            color: #222;
+        }
+
+        .login-field input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            background: #fff;
+        }
+
+        .login-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .login-button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-error {
+            background: rgba(244, 67, 54, 0.12);
+            color: #c62828;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .login-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .user-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .logout-button {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .logout-button:hover {
+            background: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <!-- Login Screen -->
+<div id="login-screen" style="display: none !important;">
+        <div class="login-container">
+            <h1>Avto Test</h1>
+            <p>Iltimos, dasturni ishlatish uchun foydalanuvchi nomi va parolingizni kiriting.</p>
+            <form id="login-form" class="login-form" autocomplete="on" novalidate>
+                <div class="login-field">
+                    <label for="login-username">Foydalanuvchi nomi</label>
+                    <input
+                        id="login-username"
+                        name="username"
+                        type="text"
+                        inputmode="text"
+                        autocomplete="username"
+                        placeholder="masalan, student"
+                        required
+                    >
+                </div>
+                <div class="login-field">
+                    <label for="login-password">Parol</label>
+                    <input
+                        id="login-password"
+                        name="password"
+                        type="password"
+                        autocomplete="current-password"
+                        placeholder="Parolingizni kiriting"
+                        required
+                    >
+                </div>
+                <div id="login-error" class="login-error hidden" role="alert" aria-live="polite"></div>
+                <button id="login-button" class="login-button" type="submit">
+                    Kirish
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <header class="header" role="banner">
+        <a href="./" class="logo" aria-label="Home">
+            <img src="./logoSvg.png" alt="Avto Test Logo">
+        </a>
+
+        <div id="timer" role="timer" aria-live="polite" aria-atomic="true"></div>
+
+        <!-- Desktop Language Switcher and Logout -->
+        <div class="desktop-header-controls desktop-only">
+            <div class="language-dropdown" aria-label="Language selection">
+                <button class="language-dropdown-toggle" id="language-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                    <img src="./assets/language.png" alt="" aria-hidden="true">
+                    <span class="language-dropdown-current" id="language-dropdown-current">UZ</span>
+                    <svg class="language-dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="language-dropdown-menu" id="language-dropdown-menu" role="menu" aria-hidden="true">
+                    <button class="language-dropdown-item" id="dropdown-lang-uz" role="menuitem" data-lang="uz">
+                        <span>UZ</span>
+                        <span class="language-dropdown-label">Uzbek</span>
+                    </button>
+                    <button class="language-dropdown-item" id="dropdown-lang-ru" role="menuitem" data-lang="ru">
+                        <span>RU</span>
+                        <span class="language-dropdown-label">Russian</span>
+                    </button>
+                    <button class="language-dropdown-item" id="dropdown-lang-cry" role="menuitem" data-lang="cry">
+                        <span>CR</span>
+                        <span class="language-dropdown-label">Cyrillic</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Desktop User Avatar Dropdown -->
+            <div class="user-avatar-dropdown desktop-only" aria-label="User menu">
+                <button class="user-avatar-toggle" id="user-avatar-toggle" aria-haspopup="true" aria-expanded="false">
+                    <svg class="user-avatar-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <div class="user-avatar-menu" id="user-avatar-menu" role="menu" aria-hidden="true">
+                    <div class="user-avatar-menu-header">
+                        <span class="user-avatar-username" id="desktop-user-name">User</span>
+                    </div>
+                    <div class="user-avatar-menu-divider"></div>
+                    <a href="./admin.html" class="user-avatar-menu-item hidden" id="desktop-admin-link" data-admin-visible role="menuitem" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19.4 15A1.65 1.65 0 0 0 20 13.67C19.9993 13.2491 19.8935 12.8354 19.692 12.4667C19.4904 12.098 19.1994 11.7858 18.843 11.559L18.772 11.515C18.6587 11.4447 18.5663 11.3414 18.5066 11.2167C18.4469 11.0919 18.4227 10.9508 18.437 10.811L18.567 9.465C18.6045 9.04262 18.517 8.6185 18.315 8.246C18.113 7.8735 17.8062 7.56654 17.434 7.364L16.223 6.717C16.1056 6.65335 16.0127 6.55482 15.9573 6.43492C15.9019 6.31502 15.8866 6.18028 15.913 6.051L16.181 4.772C16.2643 4.35863 16.1757 3.92636 15.934 3.574C15.311 -0.066 8.689 -0.066 8.066 3.574C7.8243 3.92636 7.73569 4.35863 7.819 4.772L8.088 6.051C8.11444 6.18028 8.09911 6.31502 8.04368 6.43492C7.98825 6.55482 7.89531 6.65335 7.778 6.717L6.566 7.364C6.19383 7.56654 5.88695 7.8735 5.685 8.246C5.48305 8.6185 5.39553 9.04262 5.433 9.465L5.563 10.811C5.57727 10.9508 5.55305 11.0919 5.49335 11.2167C5.43365 11.3414 5.34132 11.4447 5.228 11.515L5.157 11.559C4.80058 11.7861 4.50969 12.0982 4.30813 12.4668C4.10657 12.8354 4.00074 13.2491 4 13.67C4 14.097 4.128 14.511 4.367 14.861L5.142 16C5.21569 16.1111 5.25124 16.238 5.24306 16.3652C5.23488 16.4923 5.18343 16.6124 5.096 16.709L4.284 17.6C2.332 19.864 4.136 23 6.999 23C7.8518 22.9999 8.68918 22.7386 9.398 22.25L10.43 21.547C10.5335 21.4782 10.6552 21.4426 10.78 21.445C10.9048 21.4475 11.0247 21.4886 11.125 21.563L12 22.209C12.3162 22.4451 12.7389 22.4713 13.0825 22.2781C13.426 22.0849 13.639 21.704 13.613 21.302L13.545 20.222C13.5351 20.0778 13.5829 19.9342 13.677 19.826C13.7712 19.7177 13.9037 19.653 14.045 19.647C18 19.5 19.4 17.5 19.4 15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Admin panel</span>
+                    </a>
+                    <div class="user-avatar-menu-divider hidden" id="desktop-admin-divider" data-admin-visible aria-hidden="true"></div>
+                    <button class="user-avatar-menu-item" id="desktop-logout-button" role="menuitem">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Chiqish</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Hamburger Button -->
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+    </header>
+
+    <!-- Mobile Menu Sidebar -->
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay" aria-hidden="true"></div>
+    <aside class="mobile-menu-sidebar" id="mobile-menu-sidebar" aria-label="Mobile menu" aria-hidden="true">
+        <div class="mobile-menu-header">
+            <h2>Menu</h2>
+            <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mobile-menu-content">
+            <!-- User Info Section -->
+            <div class="mobile-user-info" id="mobile-user-info">
+                <div class="mobile-user-avatar">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="mobile-user-details">
+                    <span class="mobile-user-name" id="mobile-user-name">Student</span>
+                    <span class="mobile-user-email" id="mobile-user-email"></span>
+                </div>
+            </div>
+
+            <!-- Language Switcher Section -->
+            <div class="mobile-language-section">
+                <h3>Language</h3>
+                <nav class="mobile-language-switcher" aria-label="Language selection">
+                    <img src="./assets/language.png" alt="" aria-hidden="true">
+                    <button id="mobile-lang-uz" class="mobile-lang-btn" aria-label="Switch to Uzbek language" aria-pressed="true">UZ</button>
+                    <button id="mobile-lang-ru" class="mobile-lang-btn" aria-label="Switch to Russian language" aria-pressed="false">RU</button>
+                    <button id="mobile-lang-cry" class="mobile-lang-btn" aria-label="Switch to Cyrillic language" aria-pressed="false">CR</button>
+                </nav>
+            </div>
+
+            <!-- Logout Button -->
+            <div class="mobile-menu-actions">
+                <a href="./admin.html" class="mobile-admin-button hidden" id="mobile-admin-link" data-admin-visible aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19.4 15A1.65 1.65 0 0 0 20 13.67C19.9993 13.2491 19.8935 12.8354 19.692 12.4667C19.4904 12.098 19.1994 11.7858 18.843 11.559L18.772 11.515C18.6587 11.4447 18.5663 11.3414 18.5066 11.2167C18.4469 11.0919 18.4227 10.9508 18.437 10.811L18.567 9.465C18.6045 9.04262 18.517 8.6185 18.315 8.246C18.113 7.8735 17.8062 7.56654 17.434 7.364L16.223 6.717C16.1056 6.65335 16.0127 6.55482 15.9573 6.43492C15.9019 6.31502 15.8866 6.18028 15.913 6.051L16.181 4.772C16.2643 4.35863 16.1757 3.92636 15.934 3.574C15.311 -0.066 8.689 -0.066 8.066 3.574C7.8243 3.92636 7.73569 4.35863 7.819 4.772L8.088 6.051C8.11444 6.18028 8.09911 6.31502 8.04368 6.43492C7.98825 6.55482 7.89531 6.65335 7.778 6.717L6.566 7.364C6.19383 7.56654 5.88695 7.8735 5.685 8.246C5.48305 8.6185 5.39553 9.04262 5.433 9.465L5.563 10.811C5.57727 10.9508 5.55305 11.0919 5.49335 11.2167C5.43365 11.3414 5.34132 11.4447 5.228 11.515L5.157 11.559C4.80058 11.7861 4.50969 12.0982 4.30813 12.4668C4.10657 12.8354 4.00074 13.2491 4 13.67C4 14.097 4.128 14.511 4.367 14.861L5.142 16C5.21569 16.1111 5.25124 16.238 5.24306 16.3652C5.23488 16.4923 5.18343 16.6124 5.096 16.709L4.284 17.6C2.332 19.864 4.136 23 6.999 23C7.8518 22.9999 8.68918 22.7386 9.398 22.25L10.43 21.547C10.5335 21.4782 10.6552 21.4426 10.78 21.445C10.9048 21.4475 11.0247 21.4886 11.125 21.563L12 22.209C12.3162 22.4451 12.7389 22.4713 13.0825 22.2781C13.426 22.0849 13.639 21.704 13.613 21.302L13.545 20.222C13.5351 20.0778 13.5829 19.9342 13.677 19.826C13.7712 19.7177 13.9037 19.653 14.045 19.647C18 19.5 19.4 17.5 19.4 15Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Admin panel</span>
+                </a>
+                <button class="mobile-logout-button" id="mobile-logout-button" aria-label="Logout">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Chiqish</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <nav class="lessons" aria-label="Main navigation">
+        <button type="button" class="item darslar" aria-label="Go to lessons">
+            <img src="./assets/book.png" alt="" aria-hidden="true">
+            <span>Darslar</span>
+        </button>
+        <button type="button" class="item oraliq" id="oraliq" aria-label="Go to intermediate test">
+            <img src="./assets/timer.png" alt="" aria-hidden="true">
+            <span>Oraliq Test</span>
+        </button>
+        <button type="button" class="item testlar" aria-label="Go to tests">
+            <img src="./assets/test.png" alt="" aria-hidden="true">
+            <span>Testlar</span>
+        </button>
+        <button type="button" class="item imtihon" aria-label="Go to final exam">
+            <img src="./assets/graduate.png" alt="" aria-hidden="true">
+            <span>Nazariy imtihon</span>
+        </button>
+    </nav>
+
+    <section class="chapters" role="region" aria-label="Chapters"></section>
+
+    <section class="topics" id="topics" role="region" aria-label="Topics"></section>
+
+    <!-- Question Interface -->
+    <section class="question-interface" id="question-interface" style="display: none;" role="main" aria-label="Question interface">
+        <div class="question-content">
+            <div class="question-answers">
+                <div class="question" id="question" role="heading" aria-level="2">
+                    <!-- Question text will be inserted here -->
+                </div>
+                
+                <div class="answers" id="answers" role="list" aria-label="Answer options">
+                    <!-- Answer options will be inserted here -->
+                </div>
+            </div>
+            
+            <div class="question-image" id="question-image" role="img" aria-label="Question illustration">
+                <!-- Question image will be inserted here -->
+            </div>
+        </div>
+        
+        <nav class="test-navigation" id="test-navigation" role="navigation" aria-label="Question navigation">
+            <!-- Test navigation boxes will be inserted here -->
+        </nav>
+        
+        <div class="question-controls" role="group" aria-label="Question navigation controls">
+            <button id="prev" disabled aria-label="Previous question">Oldingi</button>
+            <button id="next" disabled aria-label="Next question">Keyingi</button>
+        </div>
+        
+        <div class="result" id="result" role="status" aria-live="polite" aria-atomic="true"></div>
+        <div class="percentage-display hidden" id="percentageDisplay" role="status" aria-live="polite">Tog'ri Javoblar: 0.00%</div>
+    </section>
+
+    <button class="back-button" id="back-button" aria-label="Go back">
+        <img src="./assets/arrowLeft.svg" alt="" class="back-arrow" aria-hidden="true">
+        <span class="back-text">Orqaga</span>
+    </button>
+    
+    <!-- Scripts -->
+    <script type="module" src="./scripts/main.js"></script>
+</body>
+</html>
