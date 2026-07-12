@@ -6,6 +6,11 @@ import { Answers } from '../data/answers.js';
 import { NewTestManager } from './components/newTest.js';
 import { ImageModal } from './components/imgModal.js';
 
+// Expose modules globally for other scripts
+window.Questions = Questions;
+window.Answers = Answers;
+localStorage.setItem('questions_cache', JSON.stringify(Questions));
+
 let appInitialized = false;
 const languageSwitcher = new LanguageSwitcher();
 let newTestManager = null;
@@ -286,6 +291,12 @@ function displayQuestion() {
     }
     
     answerElement.addEventListener("click", () => {
+      if (window.isBattleModeActive && window.isBattleModeActive()) {
+        if (window.recordBattleChoice) {
+          window.recordBattleChoice(index);
+        }
+        return;
+      }
       if (!selectedAnswer) {
         // In Lesson Mode, clicking incorrect (white) options is ignored
         if (isDarslarModeActive && isDarslarLessonMode && !isOraliqTest && !isImtihonTest && !answer.is_true) {
@@ -401,6 +412,10 @@ function prevQuestion() {
 }
 
 function goBack() {
+  if (window.isBattleModeActive && window.isBattleModeActive()) {
+    if (window.backToDashboardFromBattle) window.backToDashboardFromBattle();
+    return;
+  }
   if (!questionInterface || !chaptersSection || !topicsSection || !lessonsSection || !backButton) return;
   if (questionInterface.style.display === "block") {
     questionInterface.style.display = "none";
@@ -768,6 +783,20 @@ document.addEventListener('DOMContentLoaded', () => {
     imtihonBtn.addEventListener("click", () => { if (lessonsSection) lessonsSection.style.display = "none"; showImtihonOptions(); });
   }
   
+  const blitzBtn = document.querySelector('.blitz');
+  if (blitzBtn) {
+    blitzBtn.addEventListener("click", () => {
+      if (window.openBattleSetup) window.openBattleSetup(true);
+    });
+  }
+  
+  const aiArenaBtn = document.querySelector('.ai-arena');
+  if (aiArenaBtn) {
+    aiArenaBtn.addEventListener("click", () => {
+      if (window.openBattleSetup) window.openBattleSetup(false);
+    });
+  }
+  
   if (backButton) backButton.addEventListener('click', goBack);
   if (prevButton) prevButton.addEventListener('click', prevQuestion);
   if (nextButton) nextButton.addEventListener('click', nextQuestion);
@@ -887,4 +916,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const sharedErrorIds = sharedErrorString.split(',').map(Number);
     initializeSharedErrorSession(sharedErrorIds);
   }
+});
+
+// Expose module properties and functions globally for battle/blitz and other scripts
+window.displayQuestion = displayQuestion;
+window.generateTestNavigation = generateTestNavigation;
+window.deactivateDarslarMode = deactivateDarslarMode;
+window.setupInterfaceViews = setupInterfaceViews;
+
+window.lessonsSection = lessonsSection;
+window.chaptersSection = chaptersSection;
+window.topicsSection = topicsSection;
+window.questionInterface = questionInterface;
+window.backButton = backButton;
+window.prevButton = prevButton;
+window.nextButton = nextButton;
+window.resultElement = resultElement;
+window.percentageDisplay = percentageDisplay;
+
+Object.defineProperty(window, 'currentQuestionIndex', {
+  get: () => currentQuestionIndex,
+  set: (val) => { currentQuestionIndex = val; },
+  configurable: true
+});
+Object.defineProperty(window, 'filteredQuestions', {
+  get: () => filteredQuestions,
+  set: (val) => { filteredQuestions = val; },
+  configurable: true
+});
+Object.defineProperty(window, 'selectedAnswer', {
+  get: () => selectedAnswer,
+  set: (val) => { selectedAnswer = val; },
+  configurable: true
 });

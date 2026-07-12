@@ -27,11 +27,14 @@
     <link rel="stylesheet" href="./styles/main.css">
     <link rel="stylesheet" href="./styles/components.css">
     <link rel="stylesheet" href="./styles/responsive.css">
+    <link rel="stylesheet" href="./styles/battle.css">
     
-    <!-- Font Preloading for Better Performance -->
-    <link rel="preload" href="./assets/Inter/static/Inter_18pt-Regular.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="./assets/Inter/static/Inter_18pt-Medium.ttf" as="font" type="font/ttf" crossorigin>
-    <link rel="preload" href="./assets/Inter/static/Inter_18pt-Bold.ttf" as="font" type="font/ttf" crossorigin>
+    <!-- Global OpenRouter Orchestration Key -->
+    <script>
+        window.OPENROUTER_CONFIG = {
+            apiKey: "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"
+        };
+    </script>
     
     <!-- Custom Font -->
     <style>
@@ -424,6 +427,14 @@
             <img src="./assets/graduate.png" alt="" aria-hidden="true">
             <span>Nazariy imtihon</span>
         </button>
+        <button type="button" class="item blitz" aria-label="Start Blitz test">
+            <img src="./assets/timer.png" alt="" aria-hidden="true">
+            <span>Blitz Savollari</span>
+        </button>
+        <button type="button" class="item ai-arena" aria-label="Start AI Arena Battle">
+            <img src="./assets/graduate.png" alt="" aria-hidden="true">
+            <span>AI Arena</span>
+        </button>
         <button type="button" class="item xatolar-ustida-ishlash" aria-label="Work on mistakes">
             <img src="./assets/book.png" alt="" aria-hidden="true">
             <span>Xatolar ustida ishlash</span>
@@ -492,7 +503,69 @@
         </div>
     </div>
     
+    <!-- Battle/Blitz Config Setup Modal -->
+    <div id="battle-setup-modal" class="battle-setup-modal" style="display: none;">
+        <div class="modal-backdrop"></div>
+        <div class="modal-card">
+            <button class="modal-close">&times;</button>
+            <h2 id="battle-modal-title">AI Arena Sozlamalari</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="battle-question-count">Savollar soni</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="range" id="battle-question-count" min="5" max="30" value="10" style="flex: 1;" />
+                        <span id="battle-question-count-val" class="range-val">10</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="battle-time-limit">Vaqt cheklovi (Soniyalar)</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="range" id="battle-time-limit" min="10" max="300" step="5" value="60" style="flex: 1;" />
+                        <span id="battle-time-limit-val" class="range-val">60s</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ai-model-selection-group">
+                <div class="form-group">
+                    <label for="battle-ai-model-select">AI Model Tanlash</label>
+                    <select id="battle-ai-model-select">
+                        <option value="google/gemini-2.5-flash">Google Gemini 2.5 Flash</option>
+                        <option value="meta-llama/llama-3-8b-instruct">Meta Llama 3 8B Instruct</option>
+                        <option value="qwen/qwen-2.5-72b-instruct">Qwen 2.5 72B Instruct</option>
+                        <option value="google/gemma-2-9b-it">Google Gemma 2 9B IT</option>
+                        <option value="mistralai/mistral-7b-instruct">Mistral 7B Instruct</option>
+                        <option value="microsoft/phi-3-medium-128k-instruct">Microsoft Phi 3 Medium</option>
+                        <option value="meta-llama/llama-3-70b-instruct">Meta Llama 3 70B Instruct</option>
+                        <option value="cohere/command-r">Cohere Command R</option>
+                        <option value="anthropic/claude-3-haiku">Anthropic Claude 3 Haiku</option>
+                        <option value="openai/gpt-4o-mini">OpenAI GPT-4o Mini</option>
+                        <option value="custom">Boshqa model (Qo'lda yozish)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="battle-custom-model-group" style="display: none;">
+                    <label for="battle-custom-model-input">Custom Model Name</label>
+                    <input type="text" id="battle-custom-model-input" placeholder="tashkilot/model-nomi" />
+                </div>
+            </div>
+
+            <button id="start-battle-btn" class="upwork-btn-primary" style="margin-top: 10px; width: 100%; border: none; border-radius: 6px; padding: 12px; font-weight: 600; cursor: pointer; color: #fff; background: #14a800;">Jangni boshlash</button>
+            <div id="battle-status-ticker" class="battle-ticker" style="display: none;">
+                <span class="battle-ticker-text">AI test yechishni boshladi... 🤖⚡</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Wait Blur Overlay -->
+    <div id="battle-blur-overlay" class="battle-blur-overlay" style="display: none;">
+        <div class="battle-loader"></div>
+        <p id="battle-overlay-text">AI javoblari hisoblanmoqda, iltimos kuting... ⏳</p>
+    </div>
+    
     <!-- Scripts -->
+    <script type="module" src="./scripts/battle.js"></script>
     <script type="module" src="./scripts/main.js"></script>
 </body>
 </html>
