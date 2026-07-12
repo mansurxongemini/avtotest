@@ -287,6 +287,10 @@ body {
     border: 1px solid #e4ebe4;
 }
 
+.item.xatolar-ustida-ishlash {
+    grid-column: span 2;
+}
+
 .item:hover {
     transform: translateY(-6px);
     border-color: #108a00;
@@ -1256,4 +1260,50 @@ body {
 .upwork-toast.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
+}
+
+/* Empty Error State Layout */
+.empty-error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 24px;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e4ebe4;
+    max-width: 500px;
+    margin: 40px auto;
+    box-shadow: 0 12px 40px rgba(0, 30, 0, 0.04);
+}
+
+.empty-error-state h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #001e00;
+    margin: 0 0 12px;
+}
+
+.empty-error-state p {
+    font-size: 14px;
+    color: #5e6e5e;
+    margin: 0 0 24px;
+}
+
+.empty-error-state .upwork-btn-primary {
+    background: #14a800;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.empty-error-state .upwork-btn-primary:hover {
+    background: #118f00;
+    transform: translateY(-1px);
 }

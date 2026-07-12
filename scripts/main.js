@@ -171,25 +171,44 @@ function selectTopic(topicItem) {
 function addDarslarModeToggle() {
   const existingToggle = document.querySelector('.darslar-mode-toggle');
   if (existingToggle) existingToggle.remove();
+  
   const toggleContainer = document.createElement('div');
   toggleContainer.className = 'darslar-mode-toggle';
-  const toggleButton = document.createElement('button');
-  toggleButton.className = `mode-btn ${isDarslarLessonMode ? 'lesson-mode' : 'test-mode'}`;
-  toggleButton.innerHTML = `<span>${isDarslarLessonMode ? 'Darslik rejim' : 'Test rejim'}</span>`;
-  toggleButton.addEventListener('click', () => {
-    isDarslarLessonMode = !isDarslarLessonMode;
-    if (isDarslarLessonMode) {
-      toggleButton.className = 'mode-btn lesson-mode';
-      toggleButton.innerHTML = '<span>Darslik rejim</span>';
-    } else {
-      toggleButton.className = 'mode-btn test-mode';
-      toggleButton.innerHTML = '<span>Test rejim</span>';
+  
+  const darslikTab = document.createElement('button');
+  darslikTab.type = 'button';
+  darslikTab.className = `mode-tab darslik-tab ${isDarslarLessonMode ? 'active' : ''}`;
+  darslikTab.innerText = 'Darslik';
+  
+  const testTab = document.createElement('button');
+  testTab.type = 'button';
+  testTab.className = `mode-tab test-tab ${!isDarslarLessonMode ? 'active' : ''}`;
+  testTab.innerText = 'Test';
+  
+  darslikTab.addEventListener('click', () => {
+    if (!isDarslarLessonMode) {
+      isDarslarLessonMode = true;
+      darslikTab.classList.add('active');
+      testTab.classList.remove('active');
+      selectedAnswer = null;
+      if (resultElement) resultElement.innerText = "";
+      displayQuestion();
     }
-    selectedAnswer = null;
-    if (resultElement) resultElement.innerText = "";
-    displayQuestion();
   });
-  toggleContainer.appendChild(toggleButton);
+  
+  testTab.addEventListener('click', () => {
+    if (isDarslarLessonMode) {
+      isDarslarLessonMode = false;
+      testTab.classList.add('active');
+      darslikTab.classList.remove('active');
+      selectedAnswer = null;
+      if (resultElement) resultElement.innerText = "";
+      displayQuestion();
+    }
+  });
+  
+  toggleContainer.appendChild(darslikTab);
+  toggleContainer.appendChild(testTab);
   document.body.appendChild(toggleContainer);
 }
 
@@ -201,6 +220,8 @@ function removeDarslarModeToggle() {
 function deactivateDarslarMode() {
   isDarslarModeActive = false;
   removeDarslarModeToggle();
+  const shareAllErrorsBtn = document.getElementById('share-all-errors-btn');
+  if (shareAllErrorsBtn) shareAllErrorsBtn.style.display = 'none';
 }
 
 function filterQuestionsByTopic(topicId) {
@@ -293,15 +314,22 @@ function checkAnswer(answerElement) {
       answerId: selectedAnswer.id,
       isCorrect: selectedAnswer.is_true,
     };
+    const currentQuestion = filteredQuestions[currentQuestionIndex];
     if (selectedAnswer.is_true) {
       answerElement.classList.add("correct-answer");
       correctAnswers[currentQuestionIndex] = true;
       if (resultElement) resultElement.innerText = "To'g'ri!";
+      if (currentQuestion) {
+        removeQuestionFromErrors(currentQuestion.id);
+      }
     } else {
       answerElement.classList.add("incorrect-answer");
       correctAnswers[currentQuestionIndex] = false;
       totalMistakes++;
       if (resultElement) resultElement.innerText = "Noto'g'ri!";
+      if (currentQuestion) {
+        addQuestionToErrors(currentQuestion.id);
+      }
       const allAnswerElements = answersContainer.getElementsByClassName("answer");
       const filteredAnswers = Answers.filter(ans => ans.oraliq_dars_question === filteredQuestions[currentQuestionIndex].id);
       filteredAnswers.forEach((ans, index) => {
@@ -586,6 +614,132 @@ function loadSharedQuestion(questionId) {
   }
 }
 
+// LocalStorage Mistakes Tracking Helpers
+function addQuestionToErrors(questionId) {
+  let errors = JSON.parse(localStorage.getItem('avtotest_errors')) || [];
+  if (!errors.includes(questionId)) {
+    errors.push(questionId);
+    localStorage.setItem('avtotest_errors', JSON.stringify(errors));
+  }
+}
+
+function removeQuestionFromErrors(questionId) {
+  let errors = JSON.parse(localStorage.getItem('avtotest_errors')) || [];
+  const index = errors.indexOf(questionId);
+  if (index > -1) {
+    errors.splice(index, 1);
+    localStorage.setItem('avtotest_errors', JSON.stringify(errors));
+  }
+}
+
+// Start Mistakes Review Session
+function startMistakesReviewSession(errorIds) {
+  deactivateDarslarMode();
+  
+  // Hide dashboards, login screens
+  document.getElementById('login-screen')?.classList.add('hidden');
+  if (lessonsSection) lessonsSection.style.display = 'none';
+  if (chaptersSection) chaptersSection.style.display = 'none';
+  if (topicsSection) topicsSection.style.display = 'none';
+  
+  // Show question interface and back button
+  if (questionInterface) questionInterface.style.display = 'block';
+  if (backButton) backButton.style.display = 'inline-flex';
+  
+  setupInterfaceViews();
+  
+  filteredQuestions = Questions.filter(q => errorIds.includes(q.id));
+  
+  if (filteredQuestions.length === 0) {
+    // Hide other child elements
+    const elements = ['.question-content', '#test-navigation', '.question-controls', '#result', '#percentageDisplay'];
+    elements.forEach(sel => { 
+      const el = questionInterface.querySelector(sel); 
+      if (el) el.style.display = 'none';
+    });
+    
+    // Remove existing empty state if any
+    const existingEmpty = questionInterface.querySelector('.empty-error-state');
+    if (existingEmpty) existingEmpty.remove();
+    
+    const emptyState = document.createElement('div');
+    emptyState.className = 'empty-error-state';
+    emptyState.innerHTML = `
+      <h3>Hamma xatolar tuzatildi! 🎉</h3>
+      <p>Sizda hozircha yechilmagan xatoli savollar mavjud emas.</p>
+      <button onclick="backToDashboard()" class="upwork-btn-primary">Bosh sahifaga qaytish</button>
+    `;
+    questionInterface.appendChild(emptyState);
+    return;
+  } else {
+    // Remove empty state if present
+    const existingEmpty = questionInterface.querySelector('.empty-error-state');
+    if (existingEmpty) existingEmpty.remove();
+  }
+  
+  currentQuestionIndex = 0;
+  selectedAnswer = null;
+  correctAnswers = new Array(filteredQuestions.length).fill(undefined);
+  userAnswers = [];
+  totalQuestionsAnswered = 0;
+  totalMistakes = 0;
+  
+  displayQuestion();
+  generateTestNavigation();
+  
+  // Show bulk errors share button and hide single share button
+  const shareAllErrorsBtn = document.getElementById('share-all-errors-btn');
+  if (shareAllErrorsBtn) shareAllErrorsBtn.style.display = 'flex';
+  
+  const shareHelpBtn = document.getElementById('share-help-btn');
+  if (shareHelpBtn) shareHelpBtn.style.display = 'none';
+}
+
+window.backToDashboard = function() {
+  const emptyState = document.querySelector('.empty-error-state');
+  if (emptyState) emptyState.remove();
+  
+  if (questionInterface) {
+    questionInterface.style.display = "none";
+    setupInterfaceViews();
+  }
+  if (lessonsSection) lessonsSection.style.display = "grid";
+  if (backButton) backButton.style.display = "none";
+  deactivateDarslarMode();
+  
+  const shareAllErrorsBtn = document.getElementById('share-all-errors-btn');
+  if (shareAllErrorsBtn) shareAllErrorsBtn.style.display = 'none';
+};
+
+// Initialize Shared Error Session (Ingestion)
+function initializeSharedErrorSession(errorIds) {
+  document.getElementById('login-screen')?.classList.add('hidden');
+  if (lessonsSection) lessonsSection.style.display = 'none';
+  if (chaptersSection) chaptersSection.style.display = 'none';
+  if (topicsSection) topicsSection.style.display = 'none';
+  if (backButton) backButton.style.display = 'none';
+  
+  if (questionInterface) {
+    questionInterface.style.display = 'block';
+  }
+  
+  filteredQuestions = Questions.filter(q => errorIds.includes(q.id));
+  currentQuestionIndex = 0;
+  selectedAnswer = null;
+  correctAnswers = new Array(filteredQuestions.length).fill(undefined);
+  userAnswers = [];
+  
+  displayQuestion();
+  generateTestNavigation();
+  
+  // Hide both share buttons inside shared view
+  const shareAllErrorsBtn = document.getElementById('share-all-errors-btn');
+  if (shareAllErrorsBtn) shareAllErrorsBtn.style.display = 'none';
+  
+  const shareHelpBtn = document.getElementById('share-help-btn');
+  if (shareHelpBtn) shareHelpBtn.style.display = 'none';
+}
+
 // App DOM Initialization
 document.addEventListener('DOMContentLoaded', () => {
   const adminLinks = document.querySelectorAll('[data-admin-visible]');
@@ -685,10 +839,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  // URL Checker for Shared Question
+  // Mistakes Review Button Click Handler
+  const xatolarBtn = document.querySelector('.xatolar-ustida-ishlash');
+  if (xatolarBtn) {
+    xatolarBtn.addEventListener("click", () => {
+      const errors = JSON.parse(localStorage.getItem('avtotest_errors')) || [];
+      if (errors.length === 0) {
+        showToast("Sizda yechish uchun xatolar mavjud emas!");
+        return;
+      }
+      if (lessonsSection) lessonsSection.style.display = "none";
+      startMistakesReviewSession(errors);
+    });
+  }
+  
+  // Share All Errors Click Handler
+  const shareAllErrorsBtn = document.getElementById('share-all-errors-btn');
+  if (shareAllErrorsBtn && helpModal && shareLinkInput) {
+    shareAllErrorsBtn.addEventListener('click', () => {
+      const errors = JSON.parse(localStorage.getItem('avtotest_errors')) || [];
+      if (errors.length === 0) {
+        showToast("Sizda ulashish uchun xatolar mavjud emas!");
+        return;
+      }
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('errorIds', errors.join(','));
+      shareLinkInput.value = currentUrl.href;
+      
+      const modalInstructionText = helpModal.querySelector('.modal-instruction-text');
+      if (modalInstructionText) {
+        modalInstructionText.textContent = "Ushbu havolani olib, sizga barcha xatolaringizni yechishda yordam bera oladigan odamga yuboring😉😊";
+      }
+      
+      helpModal.style.display = 'flex';
+      setTimeout(() => helpModal.classList.add('show'), 10);
+    });
+  }
+  
+  // URL Checker for Shared Question & Shared Errors
   const urlParams = new URLSearchParams(window.location.search);
   const sharedQuestionId = urlParams.get('questionId');
+  const sharedErrorString = urlParams.get('errorIds');
+  
   if (sharedQuestionId) {
     loadSharedQuestion(sharedQuestionId);
+  } else if (sharedErrorString) {
+    const sharedErrorIds = sharedErrorString.split(',').map(Number);
+    initializeSharedErrorSession(sharedErrorIds);
   }
 });

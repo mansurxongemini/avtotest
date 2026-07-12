@@ -354,87 +354,38 @@
   box-sizing: border-box;
 }
 
-.darslar-mode-toggle::before {
-  content: "Darslik";
-  position: absolute;
-  left: 2px;
-  width: 136px;
-  line-height: 30px;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: #001e00 !important;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  pointer-events: none;
-  z-index: 3;
-  transition: color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.darslar-mode-toggle::after {
-  content: "Test";
-  position: absolute;
-  right: 2px;
-  width: 136px;
-  line-height: 30px;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: #001e00 !important;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  pointer-events: none;
-  z-index: 3;
-  transition: color 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-.darslar-mode-toggle:has(.lesson-mode)::before {
-  color: #ffffff !important; /* Active White for Darslik */
-}
-
-.darslar-mode-toggle:has(.lesson-mode)::after {
-  color: #001e00 !important; /* Inactive Charcoal for Test */
-  opacity: 0.6;
-}
-
-.darslar-mode-toggle:has(.test-mode)::after {
-  color: #ffffff !important; /* Active White for Test */
-}
-
-.darslar-mode-toggle:has(.test-mode)::before {
-  color: #001e00 !important; /* Inactive Charcoal for Darslik */
-  opacity: 0.6;
-}
-
-.darslar-mode-toggle .mode-btn {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 136px;
+.darslar-mode-toggle .mode-tab {
+  flex: 1;
   height: 30px;
-  border-radius: 18px;
-  background-color: #14a800; /* Upwork Green background indicator */
   border: none;
+  background: transparent;
+  color: #001e00; /* Inactive Charcoal */
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(20, 168, 0, 0.2);
-  z-index: 2;
-  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border-radius: 18px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   outline: none;
   padding: 0;
   margin: 0;
+  opacity: 0.6;
 }
 
-/* Hide the raw span text because it is replaced by clean background labels */
-.darslar-mode-toggle .mode-btn span {
-  display: none !important;
+.darslar-mode-toggle .mode-tab.active {
+  background-color: #14a800; /* Upwork Green active capsule background */
+  color: #ffffff !important; /* Active White text color */
+  box-shadow: 0 2px 8px rgba(20, 168, 0, 0.2);
+  opacity: 1;
 }
 
-.darslar-mode-toggle .mode-btn.lesson-mode {
-  transform: translateX(0);
-}
-
-.darslar-mode-toggle .mode-btn.test-mode {
-  transform: translateX(138px);
+.darslar-mode-toggle .mode-tab:not(.active):hover {
+  opacity: 0.95;
+  color: #001e00 !important;
 }
 
 /* Lesson Mode Correct Answer Indicator */
